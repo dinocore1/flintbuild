@@ -1,0 +1,19 @@
+plugins {
+    id 'groovy'
+    id 'maven'
+}
+
+group = 'com.devsmart'
+version = '0.0.1-SNAPSHOT'
+description = 'C/C++ plugin for Gradle'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    testCompile 'junit:junit:4.12'
+}
