@@ -19,6 +19,30 @@ class TestTasks {
         mBuildGradle = testProjectDir.newFile('build.gradle')
     }
 
+    @Test
+    void testExtention() {
+        mBuildGradle << """
+            apply plugin: com.devsmart.flintbuild.FlintPlugin
+            
+            flint {
+              library {
+                name 'foo'
+              }
+            }
+            
+            task configMyLib() {
+            }
+        """
+        Project project = ProjectBuilder.builder()
+                .withProjectDir(testProjectDir.root)
+                .build()
+
+        project.evaluate()
+
+        def p = project.extensions.findByName("FlintPlugin");
+
+    }
+
 
     @Test
     void testConfigCMakeTask() {
