@@ -11,4 +11,13 @@ public class Library {
     public String getName() {
         return mName;
     }
+
+    public void name(String name) {
+        mName = name;
+    }
+
+    @Override
+    public String toString() {
+        return mName;
+    }
 }

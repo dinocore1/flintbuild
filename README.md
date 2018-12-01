@@ -24,7 +24,7 @@ flint {
   
   target {
     name 'android'
-    cmakeArgs = [
+    cmakeArgs [
                 "CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake",
                 'ANDROID_ABI=arm64-v8a',
                 'ANDROID_NATIVE_API_LEVEL=23'

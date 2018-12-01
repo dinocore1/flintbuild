@@ -1,6 +1,7 @@
 package com.devsmart.flintbuild;
 
 import groovy.lang.Closure;
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 
 import java.util.LinkedList;
@@ -19,16 +20,19 @@ public class FlintExtention {
     public void library(Closure c) {
         System.out.println("new lib");
         Library lib = new Library();
-        Closure code = c.rehydrate(lib, mProject, lib);
-        code.call();
+        c.rehydrate(lib, mProject, lib).run();
         mLibraries.add(lib);
     }
 
     public void target(Closure c) {
-
+        Target target = new Target();
+        c.rehydrate(target, mProject, target).run();
+        mTargets.add(target);
     }
 
-    public void setProject(Project project) {
-        mProject = project;
+    public void createTasks() {
+        if(mTargets.isEmpty()) {
+            throw new GradleException("must have at least one target");
+        }
     }
 }

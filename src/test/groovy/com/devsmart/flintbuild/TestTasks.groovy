@@ -28,6 +28,17 @@ class TestTasks {
               library {
                 name 'foo'
               }
+              
+              target {
+                name 'linux'
+              }
+              
+              target {
+                cmakeArgs [
+                    "CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake",
+                    'ANDROID_ABI=arm64-v8a'
+                    ]
+              }
             }
             
             task configMyLib() {
