@@ -68,6 +68,8 @@ class FlintPlugin implements Plugin<Project> {
 
             }
 
+            LinkedHashSet<String> cmakeArgs = new LinkedHashSet<>()
+            cmakeArgs.addAll(t.cmakeArgs)
 
             String comboName = project.name.capitalize() + t.name.capitalize()
 
@@ -79,7 +81,7 @@ class FlintPlugin implements Plugin<Project> {
             configTask.buildDir = new File(project.file('build'), comboName)
             configTask.srcDir = project.file('.')
             configTask.installDir = installDir
-            //configTask.variables = cmakeArgs
+            configTask.variables = cmakeArgs
 
             BuildCMakeProject buildTask = project.tasks.create("build${comboName}", BuildCMakeProject)
             buildTask.dependsOn(configTask)
