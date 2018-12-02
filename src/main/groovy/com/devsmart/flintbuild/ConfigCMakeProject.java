@@ -1,13 +1,16 @@
 package com.devsmart.flintbuild;
 
+import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.*;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
+import org.gradle.process.ExecSpec;
 
 import java.io.File;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ConfigCMakeProject extends DefaultTask {
 
@@ -59,37 +62,24 @@ public class ConfigCMakeProject extends DefaultTask {
     @TaskAction
     public void execute(IncrementalTaskInputs inputs) {
 
+        Project p = getProject();
+        p.exec(new Action<ExecSpec>() {
+            @Override
+            public void execute(ExecSpec execSpec) {
 
-        if(!buildDir.exists()) {
-            if(!buildDir.mkdirs()){
-                throw new GradleException("cannot create build dir: " + buildDir);
+                List<String> commandLine = new LinkedList<>();
+                commandLine.add("cmake");
+                commandLine.add(srcDir.toString());
+                commandLine.add("-DCMAKE_INSTALL_PREFIX=" + installDir.toString());
+                for(Object s : variables) {
+                    commandLine.add(String.format("-D%s", s));
+                }
+
+                execSpec.commandLine(commandLine);
+                execSpec.workingDir(buildDir);
+
             }
-        }
-
-        List<String> commandLine = new LinkedList<>();
-        commandLine.add("cmake");
-        commandLine.add(srcDir.toString());
-        commandLine.add("-DCMAKE_INSTALL_PREFIX=" + installDir.toString());
-        for(Object s : variables) {
-            commandLine.add(String.format("-D%s", s));
-        }
-
-        try {
-            System.out.println("Running Process: " + commandLine + " in dir: " + buildDir);
-            Process process = new ProcessBuilder()
-                    .command(commandLine)
-                    .directory(buildDir)
-                    .inheritIO()
-                    .start();
-
-            int exitCode = process.waitFor();
-            if(exitCode != 0) {
-                throw new GradleException("cmake exited with code: " + exitCode);
-            }
-
-        } catch (Exception e) {
-            throw new GradleException("error launching cmake: " + e.getMessage(), e);
-        }
+        }).assertNormalExitValue();
 
     }
 }
