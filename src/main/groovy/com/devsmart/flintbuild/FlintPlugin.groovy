@@ -4,6 +4,7 @@ package com.devsmart.flintbuild
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 
 class FlintPlugin implements Plugin<Project> {
 
@@ -35,6 +36,8 @@ class FlintPlugin implements Plugin<Project> {
 
         for(Target t : config.targets) {
 
+            List<Task> installTasks = []
+
             for(Library l : config.libraries) {
 
                 String comboName = l.name.capitalize() + t.name.capitalize()
@@ -58,12 +61,34 @@ class FlintPlugin implements Plugin<Project> {
                 buildTask.buildDir = configTask.buildDir
 
                 BuildCMakeProject installTask = project.tasks.create("install${comboName}", BuildCMakeProject)
+                installTasks.add(installTask)
                 installTask.dependsOn(buildTask)
                 installTask.buildDir = configTask.buildDir
                 installTask.target = 'install'
 
-
             }
+
+
+            String comboName = project.name.capitalize() + t.name.capitalize()
+
+            File installDir = new File(config.rootDir, "install")
+            installDir = new File(installDir, t.name)
+
+            ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
+            configTask.dependsOn(installTasks)
+            configTask.buildDir = new File(project.file('build'), comboName)
+            configTask.srcDir = project.file('.')
+            configTask.installDir = installDir
+            //configTask.variables = cmakeArgs
+
+            BuildCMakeProject buildTask = project.tasks.create("build${comboName}", BuildCMakeProject)
+            buildTask.dependsOn(configTask)
+            buildTask.buildDir = configTask.buildDir
+
+
+            project.tasks.create("build${t.name}").dependsOn(buildTask)
+
+
         }
     }
 
@@ -80,5 +105,6 @@ class FlintPlugin implements Plugin<Project> {
         cloneTask.uri = lib.gitUri
         cloneTask.branchRef = lib.gitTag
         cloneTask.dir = srcDir
+        cloneTask.enabled = !srcDir.exists()
     }
 }
