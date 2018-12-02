@@ -36,6 +36,7 @@ public class ConfigCMakeProject extends DefaultTask {
         this.buildDir = buildDir;
     }
 
+    @Input
     public File getInstallDir() {
         return installDir;
     }

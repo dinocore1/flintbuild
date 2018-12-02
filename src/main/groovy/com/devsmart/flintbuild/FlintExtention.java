@@ -1,8 +1,6 @@
 package com.devsmart.flintbuild;
 
 import groovy.lang.Closure;
-import org.ajoberstar.gradle.git.tasks.GitClone;
-import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 
 import java.io.File;
