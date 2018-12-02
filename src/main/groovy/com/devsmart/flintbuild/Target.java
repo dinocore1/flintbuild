@@ -12,7 +12,7 @@ public class Target {
         mName = name;
     }
 
-    public void cmakeArgs(Collection<CharSequence> args) {
+    public void cmakeArgs(Collection<String> args) {
         mCMakeArgs.addAll(args);
     }
 

@@ -34,10 +34,11 @@ class TestTasks {
               }
               
               target {
-                cmakeArgs [
-                    "CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake",
+                name 'android'
+                cmakeArgs ([
+                    "CMAKE_TOOLCHAIN_FILE=${System.env.ANDROID_NDK}/build/cmake/android.toolchain.cmake",
                     'ANDROID_ABI=arm64-v8a'
-                    ]
+                    ])
               }
             }
             
