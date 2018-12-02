@@ -6,14 +6,22 @@ import java.util.LinkedHashSet;
 public class Target {
 
     private String mName;
-    private LinkedHashSet<CharSequence> mCMakeArgs = new LinkedHashSet<>();
+    private LinkedHashSet<String> mCMakeArgs = new LinkedHashSet<>();
 
     public void name(String name) {
         mName = name;
     }
 
+    public String getName() {
+        return mName;
+    }
+
     public void cmakeArgs(Collection<String> args) {
         mCMakeArgs.addAll(args);
+    }
+
+    public LinkedHashSet<String> getCmakeArgs() {
+        return mCMakeArgs;
     }
 
     @Override

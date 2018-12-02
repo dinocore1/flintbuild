@@ -3,13 +3,11 @@ package com.devsmart.flintbuild;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigCMakeProject extends DefaultTask {
 
@@ -17,7 +15,7 @@ public class ConfigCMakeProject extends DefaultTask {
     private File srcDir;
     private File buildDir;
     private File installDir;
-    private Map<String, String> variables = new HashMap<>();
+    private LinkedHashSet<Object> variables = new LinkedHashSet<>();
 
 
     @InputDirectory
@@ -38,7 +36,6 @@ public class ConfigCMakeProject extends DefaultTask {
         this.buildDir = buildDir;
     }
 
-    @InputDirectory
     public File getInstallDir() {
         return installDir;
     }
@@ -49,11 +46,11 @@ public class ConfigCMakeProject extends DefaultTask {
 
     @Optional
     @Input
-    public Map<String, String> getVariables() {
+    public LinkedHashSet<Object> getVariables() {
         return variables;
     }
 
-    public void setVariables(Map<String, String> variables) {
+    public void setVariables(LinkedHashSet<Object> variables) {
         this.variables = variables;
     }
 
@@ -72,12 +69,12 @@ public class ConfigCMakeProject extends DefaultTask {
         commandLine.add("cmake");
         commandLine.add(srcDir.toString());
         commandLine.add("-DCMAKE_INSTALL_PREFIX=" + installDir.toString());
-        for(Map.Entry<String, String> e : variables.entrySet()) {
-            commandLine.add(String.format("-D%s=%s", e.getKey(), e.getValue()));
+        for(Object s : variables) {
+            commandLine.add(String.format("-D%s", s));
         }
 
         try {
-            System.out.println("Running Process: " + commandLine);
+            System.out.println("Running Process: " + commandLine + " in dir: " + buildDir);
             Process process = new ProcessBuilder()
                     .command(commandLine)
                     .directory(buildDir)

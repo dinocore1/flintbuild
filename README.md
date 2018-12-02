@@ -13,9 +13,9 @@ flint {
 
   library {
     name 'foo'
-    gitRepo 'https://github.com/dinocore1/foo.git'
+    gitUri 'https://github.com/dinocore1/foo.git'
     gitTag 'master'
-    
+    cmakeArgs ['BUILD_TESTS=OFF']
   }
   
   target {
