@@ -14,8 +14,8 @@ flint {
   library {
     name 'foo'
     gitUri 'https://github.com/dinocore1/foo.git'
-    gitTag 'master'
-    cmakeArgs ['BUILD_TESTS=OFF']
+    gitTag 'v1.0.2'
+    cmakeArgs (['BUILD_TESTS=OFF'])
   }
   
   target {
@@ -24,11 +24,11 @@ flint {
   
   target {
     name 'android'
-    cmakeArgs [
+    cmakeArgs ([
                 "CMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake",
                 'ANDROID_ABI=arm64-v8a',
                 'ANDROID_NATIVE_API_LEVEL=23'
-                ]
+                ])
   }
 
 }

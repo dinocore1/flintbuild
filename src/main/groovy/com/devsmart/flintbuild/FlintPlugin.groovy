@@ -34,25 +34,25 @@ class FlintPlugin implements Plugin<Project> {
 
         }
 
-        for(Target t : config.targets) {
+        for(Target target : config.targets) {
 
             List<Task> installTasks = []
 
-            for(Library l : config.libraries) {
+            for(Library lib : config.libraries) {
 
-                String comboName = l.name.capitalize() + t.name.capitalize()
+                String comboName = lib.name.capitalize() + target.name.capitalize()
 
                 File installDir = new File(config.rootDir, "install")
-                installDir = new File(installDir, t.name)
+                installDir = new File(installDir, target.name)
 
                 LinkedHashSet<String> cmakeArgs = new LinkedHashSet<>()
-                cmakeArgs.addAll(t.cmakeArgs)
-                cmakeArgs.addAll(l.cmakeArgs)
+                cmakeArgs.addAll(target.cmakeArgs)
+                cmakeArgs.addAll(lib.cmakeArgs)
 
                 ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
-                configTask.dependsOn("clone${l.name.capitalize()}")
+                configTask.dependsOn("clone${lib.name.capitalize()}")
                 configTask.buildDir = new File(project.file('build'), comboName)
-                configTask.srcDir = getLibrarySrcDir(l)
+                configTask.srcDir = getLibrarySrcDir(lib)
                 configTask.installDir = installDir
                 configTask.variables = cmakeArgs
 
@@ -69,12 +69,12 @@ class FlintPlugin implements Plugin<Project> {
             }
 
             LinkedHashSet<String> cmakeArgs = new LinkedHashSet<>()
-            cmakeArgs.addAll(t.cmakeArgs)
+            cmakeArgs.addAll(target.cmakeArgs)
 
-            String comboName = project.name.capitalize() + t.name.capitalize()
+            String comboName = project.name.capitalize() + target.name.capitalize()
 
             File installDir = new File(config.rootDir, "install")
-            installDir = new File(installDir, t.name)
+            installDir = new File(installDir, target.name)
 
             ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
             configTask.dependsOn(installTasks)
@@ -88,7 +88,7 @@ class FlintPlugin implements Plugin<Project> {
             buildTask.buildDir = configTask.buildDir
 
 
-            project.tasks.create("build${t.name}").dependsOn(buildTask)
+            project.tasks.create("build${target.name}").dependsOn(buildTask)
 
 
         }
