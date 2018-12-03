@@ -1,11 +1,21 @@
 plugins {
     id 'groovy'
     id 'maven'
+    id 'java-gradle-plugin'
 }
 
 group = 'com.devsmart'
 version = '0.0.1-SNAPSHOT'
 description = 'C/C++ plugin for Gradle'
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.devsmart.flintbuild'
+            implementationClass = 'com.devsmart.flintbuild.FlintPlugin'
+        }
+    }
+}
 
 repositories {
     mavenCentral()

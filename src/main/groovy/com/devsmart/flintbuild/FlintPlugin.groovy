@@ -45,13 +45,16 @@ class FlintPlugin implements Plugin<Project> {
                 File installDir = new File(config.rootDir, "install")
                 installDir = new File(installDir, target.name)
 
+                File buildDir = new File(project.file('build'), target.name)
+                buildDir = new File(buildDir, lib.name)
+
                 LinkedHashSet<String> cmakeArgs = new LinkedHashSet<>()
                 cmakeArgs.addAll(target.cmakeArgs)
                 cmakeArgs.addAll(lib.cmakeArgs)
 
                 ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
                 configTask.dependsOn("clone${lib.name.capitalize()}")
-                configTask.buildDir = new File(project.file('build'), comboName)
+                configTask.buildDir = buildDir
                 configTask.srcDir = getLibrarySrcDir(lib)
                 configTask.installDir = installDir
                 configTask.variables = cmakeArgs
@@ -76,9 +79,14 @@ class FlintPlugin implements Plugin<Project> {
             File installDir = new File(config.rootDir, "install")
             installDir = new File(installDir, target.name)
 
+            File buildDir = new File(project.file('build'), target.name)
+            buildDir = new File(buildDir, project.name)
+
+            cmakeArgs.add("FLINT_BUILDROOT="+installDir)
+
             ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
             configTask.dependsOn(installTasks)
-            configTask.buildDir = new File(project.file('build'), comboName)
+            configTask.buildDir = buildDir
             configTask.srcDir = project.file('.')
             configTask.installDir = installDir
             configTask.variables = cmakeArgs
