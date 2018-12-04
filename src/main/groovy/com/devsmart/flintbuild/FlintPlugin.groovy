@@ -1,6 +1,8 @@
 package com.devsmart.flintbuild
 
-
+import com.devsmart.flintbuild.tasks.BuildCMakeProject
+import com.devsmart.flintbuild.tasks.ConfigCMakeProject
+import com.devsmart.flintbuild.tasks.GitCloneTask
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -53,7 +55,7 @@ class FlintPlugin implements Plugin<Project> {
                 cmakeArgs.addAll(lib.cmakeArgs)
 
                 ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
-                configTask.dependsOn("clone${lib.name.capitalize()}")
+                configTask.dependsOn("acquire${lib.name.capitalize()}")
                 configTask.buildDir = buildDir
                 configTask.srcDir = getLibrarySrcDir(lib)
                 configTask.installDir = installDir
@@ -109,12 +111,11 @@ class FlintPlugin implements Plugin<Project> {
     }
 
     protected void createGitCloneTask(Library lib) {
-        GitCloneTask cloneTask = project.tasks.create("clone${lib.name.capitalize()}", GitCloneTask)
+        GitCloneTask cloneTask = project.tasks.create("acquire${lib.name.capitalize()}", GitCloneTask)
 
         File srcDir = getLibrarySrcDir(lib)
         cloneTask.uri = lib.gitUri
         cloneTask.branchRef = lib.gitTag
         cloneTask.dir = srcDir
-        cloneTask.enabled = !srcDir.exists()
     }
 }

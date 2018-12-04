@@ -34,7 +34,6 @@ public class FlintExtention {
     }
 
     public void library(Closure c) {
-        System.out.println("new lib");
         Library lib = new Library();
         c.rehydrate(lib, mProject, lib).run();
         mLibraries.add(lib);

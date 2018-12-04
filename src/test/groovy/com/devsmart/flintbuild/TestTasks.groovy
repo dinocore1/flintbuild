@@ -1,11 +1,13 @@
 package com.devsmart.flintbuild
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import static org.junit.Assert.*
 
 class TestTasks {
 
@@ -40,14 +42,18 @@ class TestTasks {
             task configMyLib() {
             }
         """
+
         Project project = ProjectBuilder.builder()
                 .withProjectDir(testProjectDir.root)
                 .build()
 
         project.evaluate()
 
-        def p = project.extensions.findByName("FlintPlugin");
+        Task acquireTask = project.tasks['acquireBaseline']
+        assertNotNull(acquireTask)
 
+        Task configTask = project.tasks['configBaselineLinux']
+        assertNotNull(configTask)
     }
 
 
