@@ -17,7 +17,7 @@ plugins {
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.dev-smart'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 description = 'C/C++ plugin for Gradle'
 
 gradlePlugin {
@@ -43,6 +43,7 @@ dependencies {
 
 modifyPom {
     project {
+        name 'flintbuild'
         description 'Gradle Plugin building complex C/C++ CMake projects'
         url 'https://github.com/dinocore1/flintbuild'
 
@@ -55,7 +56,7 @@ modifyPom {
         licenses {
             license {
                 name 'MIT License'
-                url 'https://github.com:dinocore1/flintbuild/blob/master/LICENSE.txt'
+                url 'https://github.com/dinocore1/flintbuild/blob/master/LICENSE.txt'
                 distribution 'repo'
             }
         }
@@ -64,6 +65,7 @@ modifyPom {
             developer {
                 id 'psoucy'
                 name 'Paul Soucy'
+                email 'paul@dev-smart.com'
             }
         }
     }
