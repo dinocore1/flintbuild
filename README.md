@@ -1,5 +1,7 @@
 ### Flint Build ###
 
+[![Build Status](https://travis-ci.com/dinocore1/flintbuild.svg?branch=master)](https://travis-ci.com/dinocore1/flintbuild)
+
 Flint is a plugin for Gradle that makes building cross-platform C/C++ projects with
 lots of library dependencies much easier. With Flint, you define your project's
 dependencies and the architecture/os that you are targeting.
@@ -7,7 +9,17 @@ dependencies and the architecture/os that you are targeting.
 
 ```
 
-apply plugin: Flint
+buildscript {
+  repositories {
+      mavenCentral()
+  }
+
+  dependencies { 
+      classpath 'com.devsmart:flintbuild:0.0.1-SNAPSHOT'
+  }
+}
+
+apply plugin: com.devsmart.flintbuild.FlintPlugin
 
 flint {
 

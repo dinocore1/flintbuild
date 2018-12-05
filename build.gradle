@@ -1,10 +1,22 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+    }
+}
+
 plugins {
     id 'groovy'
     id 'maven'
     id 'java-gradle-plugin'
 }
 
-group = 'com.devsmart'
+apply plugin: 'com.bmuschko.nexus'
+
+group = 'com.dev-smart'
 version = '0.0.1-SNAPSHOT'
 description = 'C/C++ plugin for Gradle'
 
@@ -27,4 +39,32 @@ dependencies {
     implementation localGroovy()
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.1.3.201810200350-r'
     testCompile 'junit:junit:4.12'
+}
+
+modifyPom {
+    project {
+        description 'Gradle Plugin building complex C/C++ CMake projects'
+        url 'https://github.com/dinocore1/flintbuild'
+
+        scm {
+            url 'scm:git@github.com:dinocore1/flintbuild.git'
+            connection 'scm:git@github.com:dinocore1/flintbuild.git'
+            developerConnection 'scm:git@github.com:dinocore1/flintbuild.git'
+        }
+
+        licenses {
+            license {
+                name 'MIT License'
+                url 'https://github.com:dinocore1/flintbuild/blob/master/LICENSE.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'psoucy'
+                name 'Paul Soucy'
+            }
+        }
+    }
 }
