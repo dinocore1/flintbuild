@@ -17,7 +17,7 @@ plugins {
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.dev-smart'
-version = '0.0.1'
+version = '0.0.2-SNAPSHOT'
 description = 'C/C++ plugin for Gradle'
 
 gradlePlugin {
