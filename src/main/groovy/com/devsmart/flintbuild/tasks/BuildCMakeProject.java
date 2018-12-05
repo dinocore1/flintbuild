@@ -4,8 +4,10 @@ import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 import org.gradle.process.ExecSpec;
 
@@ -16,12 +18,11 @@ import java.util.List;
 public class BuildCMakeProject extends DefaultTask {
 
     private final DirectoryProperty buildDir;
-    private final Property<String> target;
+    private String target;
 
     public BuildCMakeProject() {
         Project project = getProject();
         buildDir = project.getObjects().directoryProperty();
-        target = project.getObjects().property(String.class);
     }
 
     @Internal
@@ -31,13 +32,18 @@ public class BuildCMakeProject extends DefaultTask {
 
     @Optional
     @Input
-    public Property<String> getTarget() {
+    public String getTarget() {
         return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     @TaskAction
     public void execute(IncrementalTaskInputs inputs) {
-        final String theTarget = target.get();
+
+        final File theBuildDir = buildDir.getAsFile().get();
 
         Project p = getProject();
         p.exec(new Action<ExecSpec>() {
@@ -47,11 +53,11 @@ public class BuildCMakeProject extends DefaultTask {
                 List<String> commandLine = new LinkedList<>();
                 commandLine.add("cmake");
                 commandLine.add("--build");
-                commandLine.add(buildDir.toString());
+                commandLine.add(theBuildDir.toString());
 
-                if(theTarget != null) {
+                if(target != null) {
                     commandLine.add("--target");
-                    commandLine.add(theTarget);
+                    commandLine.add(target);
                 }
 
                 execSpec.commandLine(commandLine);

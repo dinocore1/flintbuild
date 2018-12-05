@@ -117,5 +117,6 @@ class FlintPlugin implements Plugin<Project> {
         cloneTask.uri = lib.gitUri
         cloneTask.branchRef = lib.gitTag
         cloneTask.dir = srcDir
+        cloneTask.enabled = !srcDir.exists()
     }
 }
