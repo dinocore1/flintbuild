@@ -30,12 +30,9 @@ class FlintPlugin implements Plugin<Project> {
             throw new GradleException("must have at least one target")
         }
 
-        HashMap<Library, DirectoryProperty> srcDirs = []
-
         for(Library l : config.libraries) {
             if(l.gitUri != null) {
-                GitCloneTask task = createGitCloneTask(l)
-                srcDirs.put(l, task.dir)
+                createGitCloneTask(l)
             }
 
         }
@@ -47,8 +44,6 @@ class FlintPlugin implements Plugin<Project> {
             for(Library lib : config.libraries) {
 
                 String comboName = lib.name.capitalize() + target.name.capitalize()
-
-                DirectoryProperty srcDir = srcDirs[lib]
 
                 File installDir = new File(config.rootDir, "install")
                 installDir = new File(installDir, target.name)
