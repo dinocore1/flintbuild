@@ -7,6 +7,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 
 class FlintPlugin implements Plugin<Project> {
 
@@ -29,9 +30,12 @@ class FlintPlugin implements Plugin<Project> {
             throw new GradleException("must have at least one target")
         }
 
+        HashMap<Library, DirectoryProperty> srcDirs = []
+
         for(Library l : config.libraries) {
             if(l.gitUri != null) {
-                createGitCloneTask(l)
+                GitCloneTask task = createGitCloneTask(l)
+                srcDirs.put(l, task.dir)
             }
 
         }
@@ -43,6 +47,8 @@ class FlintPlugin implements Plugin<Project> {
             for(Library lib : config.libraries) {
 
                 String comboName = lib.name.capitalize() + target.name.capitalize()
+
+                DirectoryProperty srcDir = srcDirs[lib]
 
                 File installDir = new File(config.rootDir, "install")
                 installDir = new File(installDir, target.name)
@@ -64,6 +70,7 @@ class FlintPlugin implements Plugin<Project> {
                 BuildCMakeProject buildTask = project.tasks.create("build${comboName}", BuildCMakeProject)
                 buildTask.dependsOn(configTask)
                 buildTask.buildDir = configTask.buildDir
+                buildTask.srcDir = configTask.srcDir
 
                 BuildCMakeProject installTask = project.tasks.create("install${comboName}", BuildCMakeProject)
                 installTasks.add(installTask)
@@ -96,6 +103,7 @@ class FlintPlugin implements Plugin<Project> {
             BuildCMakeProject buildTask = project.tasks.create("build${comboName}", BuildCMakeProject)
             buildTask.dependsOn(configTask)
             buildTask.buildDir = configTask.buildDir
+            buildTask.srcDir = configTask.srcDir
 
 
             project.tasks.create("build${target.name}").dependsOn(buildTask)
@@ -110,7 +118,7 @@ class FlintPlugin implements Plugin<Project> {
         return srcDir
     }
 
-    protected void createGitCloneTask(Library lib) {
+    protected GitCloneTask createGitCloneTask(Library lib) {
         GitCloneTask cloneTask = project.tasks.create("acquire${lib.name.capitalize()}", GitCloneTask)
 
         File srcDir = getLibrarySrcDir(lib)
@@ -118,5 +126,7 @@ class FlintPlugin implements Plugin<Project> {
         cloneTask.branchRef = lib.gitTag
         cloneTask.dir = srcDir
         cloneTask.enabled = !srcDir.exists()
+
+        return cloneTask
     }
 }

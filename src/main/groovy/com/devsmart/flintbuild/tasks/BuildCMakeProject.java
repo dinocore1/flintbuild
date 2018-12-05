@@ -4,28 +4,29 @@ import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.file.FileTree;
+import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 import org.gradle.process.ExecSpec;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class BuildCMakeProject extends DefaultTask {
 
     private final DirectoryProperty buildDir;
     private String target;
+    private File srcDir;
 
     public BuildCMakeProject() {
         Project project = getProject();
         buildDir = project.getObjects().directoryProperty();
     }
 
-    @Internal
+    @InputDirectory
     public DirectoryProperty getBuildDir() {
         return buildDir;
     }
@@ -38,6 +39,32 @@ public class BuildCMakeProject extends DefaultTask {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public void setSrcDir(File srcDir) {
+        this.srcDir = srcDir;
+    }
+
+    @InputFiles
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public Callable<FileTree> getSrcFiles() {
+        return new Callable<FileTree>() {
+            @Override
+            public FileTree call() throws Exception {
+                if(srcDir != null) {
+                    HashMap<String, Object> config = new HashMap<String, Object>();
+                    config.put("dir", srcDir);
+                    config.put("include", new String[]{
+                            "**/*.cpp", "**/*.c", "**/*.cc", "**/*.h", "**/*.hpp", "**/*.hh"
+                    });
+
+                    return getProject().fileTree(config);
+                } else {
+                    return null;
+                }
+            }
+        };
     }
 
     @TaskAction

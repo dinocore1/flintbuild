@@ -3,18 +3,19 @@ package com.devsmart.flintbuild.tasks;
 import org.gradle.api.Action;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs;
 import org.gradle.process.ExecSpec;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class ConfigCMakeProject extends DefaultTask {
 
@@ -41,12 +42,17 @@ public class ConfigCMakeProject extends DefaultTask {
     }
 
     @InputFiles
-    public FileTree getCMakeFiles() {
-        HashMap config = new HashMap<String, Object>();
-        config.put("dir", srcDir);
-        config.put("include", "**/CMakeLists.txt");
-        ConfigurableFileTree cmakeFiles = getProject().fileTree(config);
-        return cmakeFiles;
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public Callable<FileTree> getCMakeFiles() {
+        return new Callable<FileTree>() {
+            @Override
+            public FileTree call() throws Exception {
+                HashMap config = new HashMap<String, Object>();
+                config.put("dir", srcDir);
+                config.put("include", "**/CMakeLists.txt");
+                return getProject().fileTree(config);
+            }
+        };
     }
 
     @OutputDirectory
