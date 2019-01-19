@@ -15,7 +15,7 @@ buildscript {
   }
 
   dependencies { 
-      classpath 'com.devsmart:flintbuild:0.0.1-SNAPSHOT'
+      classpath 'com.dev-smart:flintbuild:0.0.1'
   }
 }
 
