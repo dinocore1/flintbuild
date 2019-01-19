@@ -21,6 +21,8 @@ buildscript {
 
 apply plugin: com.devsmart.flintbuild.FlintPlugin
 
+def android_ndk = System.getenv('ANDROID_NDK')
+
 flint {
 
   library {
@@ -45,5 +47,18 @@ flint {
 
 }
 
+task deleteBuildDir(type: Delete) {
+    delete 'build'
+}
+
+
+```
+
+In your local CMakeLists.txt you will want to add:
+
+```
+
+include_directories(${FLINT_BUILDROOT}/include)
+link_directories(${FLINT_BUILDROOT}/lib)
 
 ```
