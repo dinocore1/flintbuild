@@ -61,6 +61,9 @@ class FlintPlugin implements Plugin<Project> {
                 configTask.srcDir = getLibrarySrcDir(lib)
                 configTask.installDir = installDir
                 configTask.variables = cmakeArgs
+                if(lib.generator != null) {
+                    configTask.generator = lib.generator
+                }
 
                 BuildCMakeProject buildTask = project.tasks.create("build${comboName}", BuildCMakeProject)
                 buildTask.dependsOn(configTask)

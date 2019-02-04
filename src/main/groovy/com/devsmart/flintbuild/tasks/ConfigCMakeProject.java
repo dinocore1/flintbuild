@@ -24,12 +24,14 @@ public class ConfigCMakeProject extends DefaultTask {
     private DirectoryProperty buildDir;
     private DirectoryProperty installDir;
     private Property<LinkedHashSet> variables;
+    private Property<String> generator;
 
     public ConfigCMakeProject() {
         Project project = getProject();
         buildDir = project.getObjects().directoryProperty();
         installDir = project.getObjects().directoryProperty();
         variables = project.getObjects().property(LinkedHashSet.class);
+        generator = project.getObjects().property(String.class);
     }
 
     @Internal
@@ -71,6 +73,12 @@ public class ConfigCMakeProject extends DefaultTask {
         return variables;
     }
 
+    @Optional
+    @Input
+    public Property<String> getGenerator() {
+        return generator;
+    }
+
     @TaskAction
     public void execute(IncrementalTaskInputs inputs) {
         Project p = getProject();
@@ -85,6 +93,12 @@ public class ConfigCMakeProject extends DefaultTask {
 
                 List<String> commandLine = new LinkedList<>();
                 commandLine.add("cmake");
+
+                if(generator.isPresent()) {
+                    commandLine.add("-G");
+                    commandLine.add(generator.get());
+                }
+
                 commandLine.add(srcDir.toString());
                 commandLine.add("-DCMAKE_INSTALL_PREFIX=" + theInstallDir.toString());
                 for(Object s : theCmakeVarables) {

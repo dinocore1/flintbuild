@@ -12,6 +12,7 @@ public class Library {
     private String mGitUri;
     private String mGitTag = "master";
     private LinkedHashSet<String> mCMakeArgs = new LinkedHashSet<>();
+    private String mGenerator;
 
     public void setName(String name) {
         mName = name;
@@ -56,6 +57,14 @@ public class Library {
     public LinkedHashSet<String> getCmakeArgs() {
         return mCMakeArgs;
 
+    }
+
+    public void generator(String generator) {
+        mGenerator = generator;
+    }
+
+    public String getGenerator() {
+        return mGenerator;
     }
 
     @Override
