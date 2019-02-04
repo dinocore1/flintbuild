@@ -62,3 +62,7 @@ include_directories(${FLINT_BUILDROOT}/include)
 link_directories(${FLINT_BUILDROOT}/lib)
 
 ```
+
+### Options
+
+Env. var FLINT_HOME -- set the install dir for build. Default is user's home dir.
