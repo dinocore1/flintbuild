@@ -26,6 +26,7 @@ public class BuildCMakeProject extends DefaultTask {
         buildDir = project.getObjects().directoryProperty();
     }
 
+    //@Internal
     @InputDirectory
     public DirectoryProperty getBuildDir() {
         return buildDir;

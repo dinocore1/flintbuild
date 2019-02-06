@@ -52,6 +52,7 @@ public class ConfigCMakeProject extends DefaultTask {
                 HashMap config = new HashMap<String, Object>();
                 config.put("dir", srcDir);
                 config.put("include", "**/CMakeLists.txt");
+                config.put("exclude", "build/**");
                 return getProject().fileTree(config);
             }
         };

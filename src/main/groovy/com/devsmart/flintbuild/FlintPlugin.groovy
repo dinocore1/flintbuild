@@ -7,6 +7,8 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.file.archive.ZipFileTree
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.Zip
 
 class FlintPlugin implements Plugin<Project> {
@@ -30,6 +32,8 @@ class FlintPlugin implements Plugin<Project> {
             throw new GradleException("must have at least one target")
         }
 
+
+
         for(Library l : config.libraries) {
             if(l.gitUri != null) {
                 createGitCloneTask(l)
@@ -38,6 +42,9 @@ class FlintPlugin implements Plugin<Project> {
         }
 
         for(Target target : config.targets) {
+
+            File deployDir = new File(project.file('build'), "install")
+            deployDir = new File(deployDir, target.name)
 
             List<Task> installTasks = []
 
@@ -72,19 +79,26 @@ class FlintPlugin implements Plugin<Project> {
                 buildTask.srcDir = configTask.srcDir
 
                 BuildCMakeProject installTask = project.tasks.create("install${comboName}", BuildCMakeProject)
-                installTasks.add(installTask)
                 installTask.dependsOn(buildTask)
                 installTask.buildDir = configTask.buildDir
                 installTask.target = 'install'
 
 
-                Zip archiveTask = project.tasks.create([type: Zip, name: "archive${comboName}"], {
+
+                Zip archiveTask = project.tasks.create([type: Zip, name: "archive${comboName}", dependsOn: installTask], {
                     from installDir
                     baseName = lib.name
                     version = lib.version
-                    destinationDir = new File(config.rootDir, "archives")
 
+                    File archiveDir = new File(config.rootDir, "archives")
+                    destinationDir = new File(archiveDir, target.name)
                 })
+
+                Copy deployTask = project.tasks.create([type: Copy, name: "deploy${comboName}", dependsOn: archiveTask], {
+                    from project.zipTree(archiveTask.archivePath)
+                    into deployDir
+                })
+                installTasks.add(deployTask)
 
             }
 
@@ -99,7 +113,7 @@ class FlintPlugin implements Plugin<Project> {
             File buildDir = new File(project.file('build'), target.name)
             buildDir = new File(buildDir, project.name)
 
-            cmakeArgs.add("FLINT_BUILDROOT="+installDir)
+            cmakeArgs.add("FLINT_DEPLOYROOT="+deployDir)
             cmakeArgs.add("FLINT_TARGET="+target.name)
 
             ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
