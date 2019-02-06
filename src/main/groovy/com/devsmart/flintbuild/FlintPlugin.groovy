@@ -7,7 +7,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.bundling.Zip
 
 class FlintPlugin implements Plugin<Project> {
 
@@ -47,6 +47,7 @@ class FlintPlugin implements Plugin<Project> {
 
                 File installDir = new File(config.rootDir, "install")
                 installDir = new File(installDir, target.name)
+                installDir = new File(installDir, "${lib.name}-${lib.version}")
 
                 File buildDir = new File(project.file('build'), target.name)
                 buildDir = new File(buildDir, lib.name)
@@ -76,6 +77,15 @@ class FlintPlugin implements Plugin<Project> {
                 installTask.buildDir = configTask.buildDir
                 installTask.target = 'install'
 
+
+                Zip archiveTask = project.tasks.create([type: Zip, name: "archive${comboName}"], {
+                    from installDir
+                    baseName = lib.name
+                    version = lib.version
+                    destinationDir = new File(config.rootDir, "archives")
+
+                })
+
             }
 
             LinkedHashSet<String> cmakeArgs = new LinkedHashSet<>()
@@ -90,6 +100,7 @@ class FlintPlugin implements Plugin<Project> {
             buildDir = new File(buildDir, project.name)
 
             cmakeArgs.add("FLINT_BUILDROOT="+installDir)
+            cmakeArgs.add("FLINT_TARGET="+target.name)
 
             ConfigCMakeProject configTask = project.tasks.create("config${comboName}", ConfigCMakeProject)
             configTask.dependsOn(installTasks)
